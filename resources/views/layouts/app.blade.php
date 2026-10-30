@@ -17,6 +17,9 @@
     <div class="blob blob-b" aria-hidden="true"></div>
     <div class="blob blob-c" aria-hidden="true"></div>
 
+     <x-loader />
+    <x-navbar />
+
     @yield('content')
 </body>
 </html>
