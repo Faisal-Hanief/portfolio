@@ -5,8 +5,10 @@ import {
     initTyping,
     initCounters,
 } from "./animations";
+import { initSkills } from "./sections";
 
 initNavbar();
+initSkills();
 
 initLoader().then(() => {
     initReveal();

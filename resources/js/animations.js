@@ -91,27 +91,37 @@ export function initNavbar() {
 }
 
 // Scroll reveal: elements with data-reveal fade in when they enter the screen.
-export function initReveal() {
-    const items = document.querySelectorAll("[data-reveal]");
-    if (!items.length) return;
+let revealObserver;
 
+function getRevealObserver() {
+    if (!revealObserver) {
+        revealObserver = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add("is-visible");
+                    obs.unobserve(entry.target);
+                });
+            },
+            { threshold: 0.15 },
+        );
+    }
+
+    return revealObserver;
+}
+
+// Can also be called for elements created later by JavaScript (e.g. skill cards).
+export function reveal(items) {
     if (!("IntersectionObserver" in window)) {
         items.forEach((item) => item.classList.add("is-visible"));
         return;
     }
 
-    const observer = new IntersectionObserver(
-        (entries, obs) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add("is-visible");
-                obs.unobserve(entry.target);
-            });
-        },
-        { threshold: 0.15 },
-    );
+    items.forEach((item) => getRevealObserver().observe(item));
+}
 
-    items.forEach((item) => observer.observe(item));
+export function initReveal() {
+    reveal(document.querySelectorAll("[data-reveal]"));
 }
 
 // Typing effect for the role line in the hero.
