@@ -15,4 +15,13 @@ return [
         'photo' => 'images/profile/profile.jpg',
         'started_year' => 2024,
     ],
+
+    // An empty value makes the matching button show as disabled ("soon").
+    'links' => [
+        'email' => env('PORTFOLIO_EMAIL') ? 'mailto:'.env('PORTFOLIO_EMAIL') : null,
+        'github' => env('PORTFOLIO_GITHUB') ?: null,
+        'whatsapp' => env('PORTFOLIO_WHATSAPP') ? 'https://wa.me/'.env('PORTFOLIO_WHATSAPP') : null,
+        'linkedin' => env('PORTFOLIO_LINKEDIN') ?: null,
+        'cv' => env('PORTFOLIO_CV') ?: null,
+    ],
 ];

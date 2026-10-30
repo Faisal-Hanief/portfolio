@@ -1,27 +1,41 @@
-// Intro loader: stays at least 900 ms, then fades out once the page has loaded.
+import { getJson } from "./api";
+
+const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+).matches;
+
+// Intro loader: stays at least 900 ms, fades out once the page has loaded.
+// Returns a promise that resolves when the fade-out starts.
 export function initLoader() {
-    const loader = document.getElementById("loader");
-    if (!loader) return;
+    return new Promise((resolve) => {
+        const loader = document.getElementById("loader");
 
-    const minTime = 900;
-    const start = performance.now();
-    document.documentElement.classList.add("overflow-hidden");
+        if (!loader) {
+            resolve();
+            return;
+        }
 
-    const hide = () => {
-        const wait = Math.max(0, minTime - (performance.now() - start));
+        const minTime = 900;
+        const start = performance.now();
+        document.documentElement.classList.add("overflow-hidden");
 
-        setTimeout(() => {
-            loader.classList.add("is-hidden");
-            document.documentElement.classList.remove("overflow-hidden");
-            setTimeout(() => loader.remove(), 600);
-        }, wait);
-    };
+        const hide = () => {
+            const wait = Math.max(0, minTime - (performance.now() - start));
 
-    if (document.readyState === "complete") {
-        hide();
-    } else {
-        window.addEventListener("load", hide, { once: true });
-    }
+            setTimeout(() => {
+                loader.classList.add("is-hidden");
+                document.documentElement.classList.remove("overflow-hidden");
+                setTimeout(() => loader.remove(), 600);
+                resolve();
+            }, wait);
+        };
+
+        if (document.readyState === "complete") {
+            hide();
+        } else {
+            window.addEventListener("load", hide, { once: true });
+        }
+    });
 }
 
 // Navbar: glass background after scrolling, mobile menu, and active link highlight.
@@ -51,7 +65,6 @@ export function initNavbar() {
         });
     }
 
-    // Highlight the link of the section that is currently in view
     const links = document.querySelectorAll("[data-nav-link]");
     const sections = [...links]
         .map((link) => document.querySelector(link.getAttribute("href")))
@@ -75,4 +88,114 @@ export function initNavbar() {
     );
 
     sections.forEach((section) => observer.observe(section));
+}
+
+// Scroll reveal: elements with data-reveal fade in when they enter the screen.
+export function initReveal() {
+    const items = document.querySelectorAll("[data-reveal]");
+    if (!items.length) return;
+
+    if (!("IntersectionObserver" in window)) {
+        items.forEach((item) => item.classList.add("is-visible"));
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries, obs) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("is-visible");
+                obs.unobserve(entry.target);
+            });
+        },
+        { threshold: 0.15 },
+    );
+
+    items.forEach((item) => observer.observe(item));
+}
+
+// Typing effect for the role line in the hero.
+export function initTyping() {
+    const element = document.getElementById("typed-role");
+    if (!element) return;
+
+    const roles = JSON.parse(element.dataset.roles || "[]");
+    if (!roles.length || reduceMotion) return;
+
+    let roleIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+
+    const tick = () => {
+        const role = roles[roleIndex];
+        element.textContent = role.slice(0, charIndex);
+
+        let delay = deleting ? 45 : 90;
+
+        if (!deleting && charIndex === role.length) {
+            deleting = true;
+            delay = 1600;
+        } else if (deleting && charIndex === 0) {
+            deleting = false;
+            roleIndex = (roleIndex + 1) % roles.length;
+            delay = 400;
+        }
+
+        charIndex += deleting ? -1 : 1;
+        setTimeout(tick, delay);
+    };
+
+    tick();
+}
+
+// Counters: numbers come from the API (/api/stats) and count up when visible.
+export async function initCounters() {
+    const elements = document.querySelectorAll("[data-stat]");
+    if (!elements.length) return;
+
+    let stats;
+
+    try {
+        stats = await getJson("/stats");
+    } catch (error) {
+        elements.forEach((element) => (element.textContent = "–"));
+        return;
+    }
+
+    const countUp = (element, target) => {
+        const duration = 1200;
+        const start = performance.now();
+
+        const step = (now) => {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            element.textContent = Math.round(target * eased);
+
+            if (progress < 1) requestAnimationFrame(step);
+        };
+
+        requestAnimationFrame(step);
+    };
+
+    const observer = new IntersectionObserver(
+        (entries, obs) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+
+                const element = entry.target;
+                const target = Number(stats[element.dataset.stat] ?? 0);
+
+                if (reduceMotion) {
+                    element.textContent = target;
+                } else {
+                    countUp(element, target);
+                }
+
+                obs.unobserve(element);
+            });
+        },
+        { threshold: 0.6 },
+    );
+
+    elements.forEach((element) => observer.observe(element));
 }

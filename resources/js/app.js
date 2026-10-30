@@ -1,4 +1,15 @@
-import { initLoader, initNavbar } from "./animations";
+import {
+    initLoader,
+    initNavbar,
+    initReveal,
+    initTyping,
+    initCounters,
+} from "./animations";
 
-initLoader();
 initNavbar();
+
+initLoader().then(() => {
+    initReveal();
+    initTyping();
+    initCounters();
+});

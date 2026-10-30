@@ -311,3 +311,92 @@ body::before {
 .btn-outline-gradient:hover > span {
     background: transparent;
 }
+
+/* Scroll reveal */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+    transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Gradient button */
+.btn-gradient {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #ffffff;
+    box-shadow: 0 0 24px rgba(99, 102, 241, 0.35);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 34px rgba(99, 102, 241, 0.55);
+}
+
+/* Profile photo with a rotating gradient ring */
+.photo-ring {
+    border-radius: 9999px;
+    background: conic-gradient(from 0deg, #60a5fa, #a78bfa, #22d3ee, #60a5fa);
+    animation: ring-spin 8s linear infinite;
+    box-shadow: 0 0 60px rgba(99, 102, 241, 0.35);
+}
+
+.photo-img {
+    position: absolute;
+    inset: 4px;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    border-radius: 9999px;
+    object-fit: cover;
+    object-position: center 20%;
+    background: #0b0d12;
+}
+
+/* Floating technology chips */
+.tech-chip {
+    position: absolute;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: 9999px;
+    color: #c4b5fd;
+    background: rgba(10, 16, 48, 0.85);
+    border: 1px solid rgba(167, 139, 250, 0.45);
+    backdrop-filter: blur(8px);
+    animation: chip-bob 5s ease-in-out infinite;
+}
+
+@keyframes chip-bob {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Typing cursor */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    margin-left: 3px;
+    vertical-align: -0.15em;
+    background: #7dd3fc;
+    animation: cursor-blink 1s steps(1) infinite;
+}
+
+@keyframes cursor-blink {
+    50% {
+        opacity: 0;
+    }
+}
