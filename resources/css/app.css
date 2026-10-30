@@ -18,3 +18,163 @@
     --color-brand-violet: #7c3aed;
     --color-brand-cyan: #06b6d4;
 }
+
+:root {
+    /* Page background options. To switch, change --page-bg below. */
+    --bg-midnight: linear-gradient(
+        160deg,
+        #060a1f 0%,
+        #0f1b4d 45%,
+        #0b3558 100%
+    );
+    --bg-aurora: linear-gradient(
+        135deg,
+        #0a0f24 0%,
+        #1e1b5e 35%,
+        #4c1d95 70%,
+        #0e5a78 100%
+    );
+    --bg-violet: linear-gradient(
+        160deg,
+        #09061a 0%,
+        #2a0f5c 40%,
+        #5b1e8c 70%,
+        #0b4a6f 100%
+    );
+
+    --page-bg: var(--bg-midnight);
+}
+
+html {
+    background: #0a0f24;
+}
+
+body {
+    min-height: 100vh;
+    color: #f1f5f9;
+}
+
+/* Fixed gradient layer behind the whole page */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--page-bg);
+}
+
+/* Soft grid overlay */
+.bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+}
+
+/* Floating gradient blobs (only transform is animated, so it stays light) */
+.blob {
+    position: fixed;
+    z-index: -1;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.blob-a {
+    width: 420px;
+    height: 420px;
+    top: -120px;
+    left: -100px;
+    background: #2563eb;
+    animation: float-a 16s ease-in-out infinite;
+}
+
+.blob-b {
+    width: 380px;
+    height: 380px;
+    top: 25%;
+    right: -120px;
+    background: #7c3aed;
+    animation: float-b 20s ease-in-out infinite;
+}
+
+.blob-c {
+    width: 320px;
+    height: 320px;
+    bottom: -120px;
+    left: 35%;
+    background: #06b6d4;
+    opacity: 0.22;
+    animation: float-a 24s ease-in-out infinite;
+}
+
+@keyframes float-a {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(40px, 30px, 0);
+    }
+}
+
+@keyframes float-b {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(-40px, 36px, 0);
+    }
+}
+
+/* Gradient text (light tones so it stays readable on the gradient background) */
+.text-gradient {
+    background: linear-gradient(90deg, #ffffff, #c7d2fe, #a5f3fc, #ffffff);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-shift 8s linear infinite;
+}
+
+@keyframes gradient-shift {
+    to {
+        background-position: 200% 50%;
+    }
+}
+
+/* Frosted glass surface for cards */
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+}
+
+@media (max-width: 640px) {
+    .blob {
+        filter: blur(60px);
+    }
+    .blob-c {
+        display: none;
+    }
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
