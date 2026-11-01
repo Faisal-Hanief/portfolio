@@ -209,3 +209,48 @@ export async function initCounters() {
 
     elements.forEach((element) => observer.observe(element));
 }
+
+// Card effects (desktop with a mouse only): cursor spotlight and a light tilt on .fx-card.
+// Uses event delegation, so cards created later by JavaScript work automatically.
+export function initCardEffects() {
+    const canHover = window.matchMedia(
+        "(hover: hover) and (pointer: fine)",
+    ).matches;
+    if (!canHover || reduceMotion) return;
+
+    const maxTilt = 4; // degrees
+
+    document.addEventListener("pointermove", (event) => {
+        if (!(event.target instanceof Element)) return;
+
+        const card = event.target.closest(".fx-card");
+        if (!card) return;
+
+        const rect = card.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        card.style.setProperty("--mx", x + "px");
+        card.style.setProperty("--my", y + "px");
+        card.style.setProperty(
+            "--ry",
+            ((x / rect.width - 0.5) * 2 * maxTilt).toFixed(2) + "deg",
+        );
+        card.style.setProperty(
+            "--rx",
+            ((0.5 - y / rect.height) * 2 * maxTilt).toFixed(2) + "deg",
+        );
+        card.style.setProperty("--lift", "-4px");
+    });
+
+    document.addEventListener("pointerout", (event) => {
+        if (!(event.target instanceof Element)) return;
+
+        const card = event.target.closest(".fx-card");
+        if (!card || card.contains(event.relatedTarget)) return;
+
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+        card.style.setProperty("--lift", "0px");
+    });
+}

@@ -4,11 +4,14 @@ import {
     initReveal,
     initTyping,
     initCounters,
+    initCardEffects,
 } from "./animations";
-import { initSkills } from "./sections";
+import { initSkills, initProjects } from "./sections";
 
 initNavbar();
 initSkills();
+initProjects();
+initCardEffects();
 
 initLoader().then(() => {
     initReveal();
