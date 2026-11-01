@@ -21,6 +21,8 @@
      <x-loader />
     <x-navbar />
 
-    @yield('content')
+        @yield('content')
+
+    <x-footer :profile="$profile" />
 </body>
 </html>
