@@ -16,7 +16,7 @@
             @foreach ($items as $id => $label)
                 <a href="#{{ $id }}" data-nav-link class="nav-link">{{ $label }}</a>
             @endforeach
-            <a href="#contact" class="btn-outline-gradient"><span>Contact me</span></a>
+            <a href="#contact" data-nav-link class="btn-outline-gradient"><span>Contact me</span></a>
         </div>
 
         <button id="menu-toggle" type="button" class="rounded-lg p-2 text-slate-200 md:hidden"
