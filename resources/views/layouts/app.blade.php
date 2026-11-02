@@ -21,7 +21,7 @@
      <x-loader />
     <x-navbar />
 
-            <main>
+    <main>
         @yield('content')
     </main>
 
