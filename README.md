@@ -64,6 +64,87 @@ Admin endpoints need an `Authorization: Bearer <token>` header. Tokens expire af
 - Never commit your `.env` file. Use `.env.example` as the template.
 - After changing CSS or JavaScript for production, run `npm run build`.
 
+## Dokumentasi Latihan 4a — Setup Laravel
+
+### 1. Versi PHP dan Laravel
+
+Project ini menggunakan:
+
+- **PHP 8.4.27** — digunakan sebagai bahasa pemrograman utama Laravel. Versi ini dipilih karena memenuhi kebutuhan project dan kompatibel dengan lingkungan pengembangan yang digunakan.
+- **Laravel 12.70.1** — digunakan sebagai framework PHP untuk membangun aplikasi web. Laravel menyediakan struktur aplikasi, routing, controller, migration, seeder, dan fitur keamanan yang membantu proses pengembangan.
+
+### 2. Struktur Folder Laravel
+
+Berikut lima folder utama Laravel beserta fungsinya:
+
+| Folder       | Fungsi                                                                          |
+| ------------ | ------------------------------------------------------------------------------- |
+| `app/`       | Menyimpan kode utama aplikasi, seperti Controller, Model, dan layanan aplikasi. |
+| `bootstrap/` | Berisi file untuk proses awal atau bootstrap aplikasi Laravel.                  |
+| `config/`    | Menyimpan berbagai konfigurasi aplikasi, seperti database dan layanan lainnya.  |
+| `database/`  | Menyimpan migration, seeder, dan factory untuk pengelolaan database.            |
+| `resources/` | Menyimpan file tampilan Blade, CSS, dan JavaScript.                             |
+| `routes/`    | Menyimpan definisi alamat atau routing aplikasi.                                |
+| `public/`    | Menjadi folder utama yang dapat diakses oleh browser dan menyimpan aset publik. |
+
+### 3. Perintah Artisan
+
+Berikut beberapa perintah Artisan yang digunakan dalam pengembangan Laravel:
+
+| Perintah                     | Fungsi                                                               |
+| ---------------------------- | -------------------------------------------------------------------- |
+| `php artisan list`           | Menampilkan daftar perintah Artisan yang tersedia.                   |
+| `php artisan about`          | Menampilkan informasi aplikasi dan konfigurasi lingkungan Laravel.   |
+| `php artisan route:list`     | Menampilkan daftar route yang terdaftar.                             |
+| `php artisan migrate`        | Menjalankan migration untuk membuat atau memperbarui tabel database. |
+| `php artisan migrate:status` | Memeriksa status migration yang sudah dan belum dijalankan.          |
+| `php artisan db:seed`        | Menjalankan seeder untuk mengisi data awal database.                 |
+| `php artisan config:clear`   | Menghapus cache konfigurasi Laravel.                                 |
+
+### 4. Konfigurasi Database
+
+Project menggunakan MySQL dengan nama database `portofolio_web`.
+
+Pengaturan koneksi database dilakukan melalui file `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=portofolio_web
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Setelah konfigurasi database selesai, migration dan seeder dapat dijalankan menggunakan:
+
+```bash
+php artisan migrate --seed
+```
+
+### 5. Tampilan Halaman Welcome
+
+Halaman Welcome dibuat untuk memeriksa apakah Laravel, PHP, dan koneksi database sudah berjalan dengan baik.
+
+Halaman ini menampilkan identitas pengembang, versi PHP, versi Laravel, serta status koneksi database.
+
+![Screenshot Welcome Latihan 4a](docs/screenshots/lat4a-welcome.webp)
+
+**Lokasi screenshot:** `docs/screenshots/lat4a-welcome.webp`
+
+### 6. Menjalankan Project
+
+Langkah menjalankan project setelah repository berhasil diunduh:
+
+1. Install dependency PHP menggunakan `composer install`.
+2. Install dependency JavaScript menggunakan `npm install`.
+3. Salin `.env.example` menjadi `.env`.
+4. Atur koneksi database MySQL pada file `.env`.
+5. Jalankan `php artisan key:generate`.
+6. Jalankan migration menggunakan `php artisan migrate --seed`.
+7. Jalankan Vite menggunakan `npm run dev`.
+8. Buka project melalui Laragon atau jalankan `php artisan serve`.
+
 ## License
 
 Personal portfolio project. All rights reserved.
