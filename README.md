@@ -30,7 +30,7 @@ cp .env.example .env        # on Windows: copy .env.example .env
 php artisan key:generate
 ```
 
-Create an empty MySQL database named `portfolio` and check the `DB_*` values in `.env`. Then set:
+Create an empty MySQL database named `portofolio_web` and check the `DB_*` values in `.env`. Then set:
 
 - `ADMIN_EMAIL` and `ADMIN_PASSWORD` for the admin account (use a strong, unique password)
 - `PORTFOLIO_EMAIL`, `PORTFOLIO_GITHUB`, `PORTFOLIO_WHATSAPP`, `PORTFOLIO_LINKEDIN`, and `PORTFOLIO_CV` for the contact buttons (leave a value empty to show that button as "soon")
