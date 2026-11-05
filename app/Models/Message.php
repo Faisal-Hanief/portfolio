@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ContactMessage extends Model
+class Message extends Model
 {
-    protected $fillable = ['name', 'email', 'message', 'ip_address'];
+    protected $fillable = ['sender_name', 'sender_email', 'subject', 'body'];
 
     protected function casts(): array
     {

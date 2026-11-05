@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('skills', function (Blueprint $table) {
+    Schema::create('messages', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('skill_category_id')->constrained()->cascadeOnDelete();
-        $table->string('name')->unique();
-        $table->unsignedSmallInteger('sort_order')->default(0);
+        $table->string('sender_name');
+        $table->string('sender_email');
+        $table->string('subject');
+        $table->text('body');
+        $table->boolean('is_read')->default(false);
         $table->timestamps();
     });
 }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('messages');
     }
 };

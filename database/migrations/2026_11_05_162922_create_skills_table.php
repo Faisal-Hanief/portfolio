@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('contact_messages', function (Blueprint $table) {
+    Schema::create('skills', function (Blueprint $table) {
         $table->id();
         $table->string('name');
-        $table->string('email');
-        $table->text('message');
-        $table->string('ip_address', 45)->nullable();
-        $table->boolean('is_read')->default(false);
+        $table->enum('category', ['Frontend', 'Backend', 'Database', 'Tools']);
+        $table->enum('level', ['Beginner', 'Intermediate', 'Advanced'])->default('Intermediate');
+        $table->string('icon')->nullable();
         $table->timestamps();
     });
 }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contact_messages');
+        Schema::dropIfExists('skills');
     }
 };
