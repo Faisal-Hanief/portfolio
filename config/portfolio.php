@@ -24,4 +24,10 @@ return [
         'linkedin' => env('PORTFOLIO_LINKEDIN') ?: null,
         'cv' => env('PORTFOLIO_CV') ?: null,
     ],
+
+    // Raw contact details used by the seeder.
+    'contact' => [
+        'email' => env('PORTFOLIO_EMAIL') ?: null,
+        'phone' => env('PORTFOLIO_WHATSAPP') ?: null,
+    ],
 ];

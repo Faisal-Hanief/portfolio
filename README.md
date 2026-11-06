@@ -1,69 +1,136 @@
-# Portfolio Website
+# Latihan 4b: Database Migration, Model Eloquent, dan Seeder
 
-Personal portfolio website of **Muhammad Faisal Hanief**, an Informatics student at Universitas Teknokrat Indonesia. Built with Laravel 12, Tailwind CSS v4, and MySQL. The skills and projects shown on the page are loaded from the site's own REST API.
+|        |                        |
+| ------ | ---------------------- |
+| Nama   | Muhammad Faisal Hanief |
+| NPM    | 24312201               |
+| Kelas  | IF 24 B                |
+| Branch | `Lat-4b_DatabaseModel` |
 
-> Live demo: coming soon
+Studi kasus: website portofolio mahasiswa. Latihan ini membangun skema database 7 tabel, model Eloquent beserta relasinya, dan seeder data portofolio.
 
-## Features
+## Diagram relasi (ERD)
 
-- Responsive dark design with a gradient background, scroll animations, typing effect, and a cursor spotlight on project cards
-- Sections: Hero, About, Skills, Projects, Education, and Contact
-- Skills and projects are loaded from a REST API (Laravel + MySQL), with loading and error states
-- Contact form that saves messages to the database (rate limited)
-- Token-based admin API (Laravel Sanctum) to manage projects and read messages
-- Placeholder buttons for links that are not ready yet (CV, LinkedIn, project GitHub and demo links)
+```mermaid
+erDiagram
+    PROJECTS ||--o{ PROJECT_SKILL : "has"
+    SKILLS ||--o{ PROJECT_SKILL : "used in"
 
-## Tech stack
+    PROFILES {
+        bigint id PK
+        string full_name
+        string headline
+        text bio
+        string photo_url
+        string cv_url
+        string email
+        string phone
+        string location
+        string github_url
+        string linkedin_url
+        string instagram_url
+    }
+    SKILLS {
+        bigint id PK
+        string name
+        enum category
+        enum level
+        string icon
+    }
+    PROJECTS {
+        bigint id PK
+        string title
+        string slug UK
+        string summary
+        text description
+        string thumbnail_url
+        string demo_url
+        string github_url
+        boolean is_featured
+    }
+    PROJECT_SKILL {
+        bigint id PK
+        bigint project_id FK
+        bigint skill_id FK
+    }
+    EXPERIENCES {
+        bigint id PK
+        string title
+        string organization
+        enum type
+        date start_date
+        date end_date
+        boolean is_current
+        text description
+    }
+    CERTIFICATES {
+        bigint id PK
+        string title
+        string issuer
+        date issued_date
+        string credential_url
+        text description
+    }
+    MESSAGES {
+        bigint id PK
+        string sender_name
+        string sender_email
+        string subject
+        text body
+        boolean is_read
+    }
+```
 
-Laravel 12 · PHP 8.2+ · MySQL · Tailwind CSS v4 · Vite · Vanilla JavaScript · Laravel Sanctum
+## Penjelasan tabel
 
-## Getting started
+| Tabel           | Fungsi                                                                                                                      |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `profiles`      | Satu baris identitas dan kontak pemilik portofolio                                                                          |
+| `skills`        | Keahlian. `category` bertipe enum (Frontend, Backend, Database, Tools) dan `level` bertipe enum dengan default Intermediate |
+| `projects`      | Proyek. Kolom `slug` bersifat unik                                                                                          |
+| `project_skill` | Tabel pivot proyek dan skill (many-to-many). Dua foreign key dengan `onDelete('cascade')`                                   |
+| `experiences`   | Timeline pendidikan, organisasi, magang, dan pekerjaan. `type` bertipe enum                                                 |
+| `certificates`  | Sertifikat dan penghargaan                                                                                                  |
+| `messages`      | Pesan dari form kontak. `is_read` bertipe boolean                                                                           |
 
-Requirements: PHP 8.2+, Composer, Node.js 20.19+ (or 22.12+), and MySQL.
+Relasi: `projects` dan `skills` berhubungan many-to-many lewat `project_skill`. Tabel `profiles`, `experiences`, `certificates`, dan `messages` berdiri sendiri.
+
+## Model dan proteksi mass assignment
+
+- `Project::skills()` dan `Skill::projects()` memakai `belongsToMany(..., 'project_skill')`.
+- Model master (`Profile`, `Skill`, `Project`, `Experience`, `Certificate`) memakai `$guarded = ['id']`, karena datanya diisi oleh seeder dan admin.
+- Model `Message` memakai `$fillable` (daftar putih), karena menerima input langsung dari pengunjung website. Kolom lain seperti `is_read` otomatis diabaikan walaupun dikirim dari luar.
+
+## Seeder
+
+`PortfolioSeeder` mengisi: 1 profil, 15 skill (4 kategori), 3 proyek yang terhubung ke skill lewat `sync()`, 3 pengalaman (pendidikan, pekerjaan, organisasi), dan 4 sertifikat. Data kontak pribadi (email dan telepon) dibaca dari file `.env`, sehingga tidak tersimpan di repositori.
+
+## Bukti pengerjaan
+
+Daftar tabel di MySQL (`portofolio_web`):
+
+![Daftar tujuh tabel di database portofolio_web](docs/screenshots/lat4b-database.webp)
+
+Pengujian relasi dengan Artisan Tinker:
+
+![Hasil Tinker: skill milik proyek pertama](docs/screenshots/lat4b-tinker.webp)
+
+## Cara menjalankan
 
 ```bash
-git clone https://github.com/Faisal-Hanief/portfolio.git
-cd portfolio
 composer install
 npm install
-cp .env.example .env        # on Windows: copy .env.example .env
+copy .env.example .env
 php artisan key:generate
 ```
 
-Create an empty MySQL database named `portofolio_web` and check the `DB_*` values in `.env`. Then set:
-
-- `ADMIN_EMAIL` and `ADMIN_PASSWORD` for the admin account (use a strong, unique password)
-- `PORTFOLIO_EMAIL`, `PORTFOLIO_GITHUB`, `PORTFOLIO_WHATSAPP`, `PORTFOLIO_LINKEDIN`, and `PORTFOLIO_CV` for the contact buttons (leave a value empty to show that button as "soon")
+Buat database kosong `portofolio_web`, isi nilai `DB_*`, `ADMIN_EMAIL`, dan `ADMIN_PASSWORD` di `.env`, lalu:
 
 ```bash
-php artisan migrate --seed
-npm run dev
+php artisan migrate:fresh --seed
 ```
 
-Open the site in your local web server (for example Laragon, or `php artisan serve`).
+## Keamanan
 
-## API
-
-| Method              | Endpoint                          | Access                | Description                               |
-| ------------------- | --------------------------------- | --------------------- | ----------------------------------------- |
-| GET                 | `/api/projects`                   | Public                | List published projects with their skills |
-| GET                 | `/api/projects/{slug}`            | Public                | Show one project                          |
-| GET                 | `/api/skills`                     | Public                | Skills grouped by category                |
-| GET                 | `/api/stats`                      | Public                | Project and skill counts                  |
-| POST                | `/api/contact`                    | Public (5 per minute) | Save a contact message                    |
-| POST                | `/api/login`                      | Public (5 per minute) | Get an admin token                        |
-| POST                | `/api/logout`                     | Token                 | Revoke the current token                  |
-| POST, PATCH, DELETE | `/api/projects`                   | Token                 | Create, update, and delete projects       |
-| GET                 | `/api/contact-messages`           | Token                 | Read contact messages                     |
-| PATCH               | `/api/contact-messages/{id}/read` | Token                 | Mark a message as read                    |
-
-Admin endpoints need an `Authorization: Bearer <token>` header. Tokens expire after one day.
-
-## Notes
-
-- Never commit your `.env` file. Use `.env.example` as the template.
-- After changing CSS or JavaScript for production, run `npm run build`.
-
-## License
-
-Personal portfolio project. All rights reserved.
+- File `.env` tidak diunggah. Yang diunggah hanya `.env.example`.
+- Migrasi diulang dengan `php artisan migrate:fresh --seed`, bukan dengan mengubah tabel secara manual.
