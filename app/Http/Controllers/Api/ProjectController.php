@@ -11,20 +11,14 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::published()
-            ->with('skills')
-            ->orderBy('sort_order')
-            ->get();
+        $projects = Project::with('skills')->orderBy('id')->get();
 
         return ProjectResource::collection($projects);
     }
 
     public function show(string $slug)
     {
-        $project = Project::published()
-            ->with('skills')
-            ->where('slug', $slug)
-            ->firstOrFail();
+        $project = Project::with('skills')->where('slug', $slug)->firstOrFail();
 
         return new ProjectResource($project);
     }

@@ -1,6 +1,8 @@
 @php
+    $paragraphs = $profile['bio'] ?? [];
+
     $facts = [
-        ['label' => 'Based in', 'value' => 'Bandar Lampung, Indonesia'],
+        ['label' => 'Based in', 'value' => $profile['location'] ?? 'Bandar Lampung, Indonesia'],
         ['label' => 'Studying', 'value' => 'Informatics, Universitas Teknokrat Indonesia'],
         ['label' => 'Focus', 'value' => 'Web & mobile development'],
         ['label' => 'Open to', 'value' => 'Internships & career opportunities'],
@@ -13,19 +15,9 @@
 
         <div class="grid items-start gap-10 lg:grid-cols-[1.3fr_1fr]">
             <div class="space-y-4 text-base leading-relaxed text-slate-300">
-                <p data-reveal>
-                    Hi, I'm Faisal, an Informatics student at Universitas Teknokrat Indonesia in Bandar Lampung.
-                    I started in 2024, and I've been learning web and mobile development through coursework and
-                    the projects I build along the way.
-                </p>
-                <p data-reveal style="--reveal-delay: 100ms">
-                    On the web, I work with Laravel, Tailwind CSS, and MySQL. On mobile, I build apps with Flutter
-                    and Dart. I like the design side too, so I plan screens in Figma before I start coding.
-                </p>
-                <p data-reveal style="--reveal-delay: 200ms">
-                    I'm still learning, and I enjoy turning what I learn into something that works. I'm looking for
-                    internship and career opportunities where I can keep improving and contribute where I can.
-                </p>
+                @foreach ($paragraphs as $paragraph)
+                    <p data-reveal style="--reveal-delay: {{ $loop->index * 100 }}ms">{{ $paragraph }}</p>
+                @endforeach
             </div>
 
             <div class="grid gap-3 sm:grid-cols-2">

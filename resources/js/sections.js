@@ -3,14 +3,13 @@ import { reveal } from "./animations";
 
 // Inline SVG icons (no icon library needed). Unknown keys fall back to the "code" icon.
 const ICONS = {
-    "mobile-development":
-        '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
-    "web-development":
-        '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9s1.3-6.4 3.8-9z"/>',
-    "database-backend":
+    Frontend:
+        '<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18"/>',
+    Backend:
+        '<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01"/><path d="M7 16.5h.01"/>',
+    Database:
         '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
-    "design-tools":
-        '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 00-3-3l-10 10L4 20z"/><path d="M14 7l3 3"/>',
+    Tools: '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 00-3-3l-10 10L4 20z"/><path d="M14 7l3 3"/>',
     image: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/>',
 };
 
@@ -69,12 +68,15 @@ function loadSection({ rootId, gridId, retryId, path, render }) {
         try {
             const items = await getJson(path);
 
-            if (!items.length) throw new Error("No data returned");
+            if (!Array.isArray(items) || !items.length) {
+                throw new Error("No data returned");
+            }
 
             grid.replaceChildren(...items.map(render));
             show("ready");
             reveal(grid.querySelectorAll("[data-reveal]"));
         } catch (error) {
+            console.error(`Failed to load ${path}:`, error);
             show("error");
         }
     };
@@ -83,21 +85,21 @@ function loadSection({ rootId, gridId, retryId, path, render }) {
     load();
 }
 
-// ----- Skills -----
+// ----- Skills (grouped by category: Frontend, Backend, Database, Tools) -----
 
-function createCategoryCard(category, index) {
+function createCategoryCard(group, index) {
     const card = el("div", "glass rounded-2xl p-5");
     card.setAttribute("data-reveal", "");
     card.style.setProperty("--reveal-delay", index * 80 + "ms");
 
     const header = el("div", "mb-4 flex items-center gap-3");
     header.append(
-        createIcon(category.slug),
-        el("h3", "text-lg font-medium text-white", category.name),
+        createIcon(group.category),
+        el("h3", "text-lg font-medium text-white", group.category),
     );
 
     const chips = el("div", "flex flex-wrap gap-2");
-    category.skills.forEach((skill) =>
+    group.skills.forEach((skill) =>
         chips.append(el("span", "skill-chip", skill.name)),
     );
 
@@ -149,12 +151,12 @@ function createProjectCard(project, index) {
 
     const card = el("div", "fx-card flex h-full flex-col");
 
-    // Screenshot, or a gradient placeholder while the project has no image yet
+    // Thumbnail, or a gradient placeholder while the project has no image yet
     const shot = el("div", "project-shot");
 
-    if (project.image_url) {
+    if (project.thumbnail_url) {
         const image = el("img", "h-full w-full object-cover");
-        image.src = project.image_url;
+        image.src = project.thumbnail_url;
         image.alt = "Screenshot of " + project.title;
         image.loading = "lazy";
         shot.append(image);
@@ -172,7 +174,7 @@ function createProjectCard(project, index) {
         el(
             "p",
             "mt-2 flex-1 text-sm leading-relaxed text-slate-300",
-            project.description,
+            project.summary,
         ),
     );
 
@@ -201,5 +203,66 @@ export function initProjects() {
         retryId: "projects-retry",
         path: "/projects",
         render: createProjectCard,
+    });
+}
+
+// ----- Experiences (work and organization) -----
+
+function formatExperienceDate(date) {
+    if (!date) return "Present";
+
+    return new Date(date + "T00:00:00").toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+    });
+}
+
+function createExperienceCard(experience, index) {
+    const card = el("article", "glass rounded-2xl p-6");
+    card.setAttribute("data-reveal", "");
+    card.style.setProperty("--reveal-delay", index * 100 + "ms");
+
+    const header = el(
+        "div",
+        "flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between",
+    );
+
+    const information = el("div");
+    information.append(
+        el("h3", "text-lg font-semibold text-white", experience.title),
+        el("p", "mt-1 text-sm text-sky-300", experience.organization),
+    );
+
+    const start = formatExperienceDate(experience.start_date);
+    const end = experience.is_current
+        ? "Present"
+        : formatExperienceDate(experience.end_date);
+
+    const period = el(
+        "p",
+        "text-sm text-slate-400 sm:text-right",
+        start + " – " + end,
+    );
+
+    header.append(information, period);
+
+    const description = el(
+        "p",
+        "mt-4 text-sm leading-relaxed text-slate-300",
+        experience.description,
+    );
+
+    card.append(header, description);
+
+    return card;
+}
+
+export function initExperiences() {
+    loadSection({
+        rootId: "experience-root",
+        gridId: "experience-list",
+        retryId: "experience-retry",
+        path: "/experiences",
+        render: createExperienceCard,
     });
 }

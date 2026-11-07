@@ -22,12 +22,12 @@ class ProjectRequest extends FormRequest
         return [
             'title' => [$required, 'string', 'max:150'],
             'slug' => [$required, 'string', 'max:150', 'alpha_dash', Rule::unique('projects', 'slug')->ignore($projectId)],
+            'summary' => [$required, 'string', 'max:255'],
             'description' => [$required, 'string', 'max:2000'],
-            'image_path' => ['nullable', 'string', 'max:255'],
-            'github_url' => ['nullable', 'url', 'max:255'],
+            'thumbnail_url' => ['nullable', 'string', 'max:255'],
             'demo_url' => ['nullable', 'url', 'max:255'],
-            'is_published' => ['sometimes', 'boolean'],
-            'sort_order' => ['sometimes', 'integer', 'min:0', 'max:65535'],
+            'github_url' => ['nullable', 'url', 'max:255'],
+            'is_featured' => ['sometimes', 'boolean'],
             'skill_ids' => ['sometimes', 'array'],
             'skill_ids.*' => ['integer', 'exists:skills,id'],
         ];

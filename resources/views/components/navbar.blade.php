@@ -5,6 +5,7 @@
         'skills' => 'Skills',
         'projects' => 'Projects',
         'education' => 'Education',
+        'experience' => 'Experience',
     ];
 @endphp
 

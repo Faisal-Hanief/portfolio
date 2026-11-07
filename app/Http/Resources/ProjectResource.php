@@ -13,10 +13,12 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
+            'summary' => $this->summary,
             'description' => $this->description,
-            'image_url' => $this->image_path ? asset($this->image_path) : null,
-            'github_url' => $this->github_url,
+            'thumbnail_url' => $this->thumbnail_url ? asset($this->thumbnail_url) : null,
             'demo_url' => $this->demo_url,
+            'github_url' => $this->github_url,
+            'is_featured' => $this->is_featured,
             'skills' => SkillResource::collection($this->whenLoaded('skills')),
         ];
     }

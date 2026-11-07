@@ -12,7 +12,7 @@ class StatsController extends Controller
     {
         return response()->json([
             'data' => [
-                'projects_count' => Project::published()->count(),
+                'projects_count' => Project::count(),
                 'skills_count' => Skill::count(),
             ],
         ]);

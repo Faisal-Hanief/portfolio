@@ -6,5 +6,6 @@
     @include('sections.skills')
     @include('sections.projects')
     @include('sections.education')
+    @include('sections.experience')
     @include('sections.contact')
 @endsection

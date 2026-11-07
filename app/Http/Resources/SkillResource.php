@@ -12,6 +12,8 @@ class SkillResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'category' => $this->category,
+            'icon' => $this->icon,
         ];
     }
 }
