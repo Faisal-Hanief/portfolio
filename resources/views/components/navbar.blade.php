@@ -4,8 +4,8 @@
         'about' => 'About',
         'skills' => 'Skills',
         'projects' => 'Projects',
-        'education' => 'Education',
         'experience' => 'Experience',
+        'certificates' => 'Certificates',
     ];
 @endphp
 

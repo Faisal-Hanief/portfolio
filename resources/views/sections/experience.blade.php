@@ -1,6 +1,10 @@
 <section id="experience" class="relative px-6 py-24">
     <div class="mx-auto max-w-6xl">
-        <x-section-heading number="05" label="experience" title="Experience & Organization" />
+        <x-section-heading
+            number="04"
+            label="experience"
+            title="Experience & Education"
+        />
 
         <div id="experience-root">
             {{-- Loading --}}
@@ -25,7 +29,7 @@
             </div>
 
             {{-- Ready --}}
-            <div data-when="ready" id="experience-list" hidden class="space-y-4"></div>
+            <div data-when="ready" id="experience-grid" hidden class="space-y-4"></div>
         </div>
     </div>
 </section>

@@ -25,6 +25,6 @@
         @yield('content')
     </main>
 
-    <x-footer :profile="$profile" />
+    <x-footer :profile="$profile" :links="$links" />
 </body>
 </html>

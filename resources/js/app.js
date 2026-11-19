@@ -6,13 +6,19 @@ import {
     initCounters,
     initCardEffects,
 } from "./animations";
-import { initSkills, initProjects, initExperiences } from "./sections";
+import {
+    initSkills,
+    initProjects,
+    initExperience,
+    initCertificates,
+} from "./sections";
 import { initContactForm } from "./contact";
 
 initNavbar();
 initSkills();
 initProjects();
-initExperiences();
+initExperience();
+initCertificates();
 initCardEffects();
 initContactForm();
 
