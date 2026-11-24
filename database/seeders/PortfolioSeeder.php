@@ -78,42 +78,62 @@ class PortfolioSeeder extends Seeder
         return $skills;
     }
 
-    /** @param array<string, Skill> $skills */
-    private function seedProjects(array $skills): void
-    {
-        $projects = [
-            [
-                'title' => 'CleanTrip',
-                'summary' => 'A Flutter-based beach tourism directory app focused on Lampung Province.',
-            ],
-            [
-                'title' => 'Nusantara Journey',
-                'summary' => 'A Flutter village tourism (desa wisata) app for Indonesian users.',
-            ],
-            [
-                'title' => 'GameVault',
-                'summary' => 'A Flutter app for managing a personal game collection.',
-            ],
-        ];
+/** @param array<string, Skill> $skills */
+private function seedProjects(array $skills): void
+{
+    $projects = [
+        [
+            'title' => 'CleanTrip',
+            'summary' => 'A mobile directory for discovering hidden beaches in Lampung, Indonesia.',
+            'description' => 'CleanTrip is a Flutter-based tourism directory featuring beach destinations in Lampung. Users can explore destinations, search and filter beaches, save favorites, and access travel guides.',
+            'thumbnail_url' => 'images/projects/cleantrip.webp',
+            'skills' => ['Flutter', 'Dart'],
+        ],
+        [
+            'title' => 'Nusantara Journey',
+            'summary' => 'A mobile tourism marketplace and trip planner for Indonesian tourist villages.',
+            'description' => 'Nusantara Journey helps travelers discover tourist villages, explore destinations, book travel packages, and manage travel plans. Developed with Flutter and Firebase.',
+            'thumbnail_url' => 'images/projects/nusantara-journey.webp',
+            'skills' => ['Flutter', 'Dart', 'Firebase'],
+        ],
+        [
+            'title' => 'GameVault',
+            'summary' => 'A personal game collection tracker with playtime monitoring and statistics.',
+            'description' => 'GameVault allows users to organize game collections, manage wishlists, track playtime, assign ratings, monitor gaming progress, and view collection statistics.',
+            'thumbnail_url' => 'images/projects/gamevault.webp',
+            'skills' => ['Flutter', 'Dart'],
+        ],
+        [
+            'title' => 'Teknoji',
+            'summary' => 'A marketplace for buying and selling second-hand PC components and accessories.',
+            'description' => 'Teknoji is a mobile marketplace built with Flutter and Firebase. Users can browse and list second-hand PC components, save favorites, negotiate through real-time chat, and receive message notifications.',
+            'thumbnail_url' => 'images/projects/teknoji.webp',
+            'skills' => ['Flutter', 'Dart', 'Firebase'],
+        ],
+    ];
 
-        foreach ($projects as $data) {
-            $project = Project::create([
+    foreach ($projects as $data) {
+        $project = Project::updateOrCreate(
+            ['slug' => Str::slug($data['title'])],
+            [
                 'title' => $data['title'],
-                'slug' => Str::slug($data['title']),
                 'summary' => $data['summary'],
-                'description' => $data['summary'].' Built with Flutter and Dart.',
-                'thumbnail_url' => null,
-                'demo_url' => null,
-                'github_url' => null,
+                'description' => $data['description'],
+                'thumbnail_url' => $data['thumbnail_url'],
                 'is_featured' => true,
-            ]);
+            ]
+        );
 
-            $project->skills()->sync([
-                $skills['Flutter']->id,
-                $skills['Dart']->id,
-            ]);
+        $skillIds = [];
+
+        foreach ($data['skills'] as $skillName) {
+            $skillIds[] = $skills[$skillName]->id;
         }
+
+        $project->skills()->sync($skillIds);
     }
+}
+
 
     private function seedExperiences(): void
     {
