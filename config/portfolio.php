@@ -22,7 +22,7 @@ return [
         'github' => env('PORTFOLIO_GITHUB') ?: null,
         'whatsapp' => env('PORTFOLIO_WHATSAPP') ? 'https://wa.me/'.env('PORTFOLIO_WHATSAPP') : null,
         'linkedin' => env('PORTFOLIO_LINKEDIN') ?: null,
-        'cv' => env('PORTFOLIO_CV') ?: null,
+        'cv' => env('PORTFOLIO_CV') ?: 'docs/CV-Muhammad-Faisal-Hanief.pdf',
     ],
 
     // Raw contact details used by the seeder.
